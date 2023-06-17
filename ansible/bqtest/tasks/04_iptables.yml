@@ -1,0 +1,21 @@
+---
+- name: Modify IpTables rules
+  block:
+    - name: Allow 22, 80, 443
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_ports:
+          - "22"
+          - "80"
+          - "443"
+        jump: ACCEPT
+      become: yes
+    - name: Block everything else
+      ansible.builtin.iptables:
+        chain: INPUT
+        protocol: tcp
+        jump: DROP
+        rule_num: 99
+      become: yes
+

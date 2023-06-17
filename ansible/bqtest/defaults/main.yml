@@ -1,0 +1,26 @@
+---
+# handlers file for bq-test
+user_name: ubuntu
+
+service_network: bq
+
+php:
+  name: bq-php
+  image: gino20d/bq-php
+  network: bq
+  volume: bq
+
+nginx:
+  name: bq-nginx
+  image: gino20d/bq-nginx
+  network: bq
+  volume: bq
+  ports: "80:80"
+
+mysql:
+  name: bq-sql
+  image: mysql:8.0.31
+  root_pass: mysecretpass
+  database_name: bq_test
+  network: bq
+

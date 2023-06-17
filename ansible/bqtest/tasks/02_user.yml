@@ -1,0 +1,15 @@
+---
+- name: Add local user
+  ansible.builtin.user:
+    name: "{{ user_name }}"
+    shell: /bin/bash
+    groups: docker
+    append: yes
+- name: Add sudo permissions
+  ansible.builtin.shell:
+    cmd: "echo 'ubuntu ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+- name: Add user public key
+  ansible.posix.authorized_key:
+    user: "{{ user_name }}"
+    state: present
+    key: "{{ lookup('file', 'files/key.pub') }}"

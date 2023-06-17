@@ -1,0 +1,9 @@
+---
+- name: Run preparation tasks
+  ansible.builtin.include: 01_prepare.yml
+- name: Add user
+  ansible.builtin.include: 02_user.yml
+- name: Deploy services
+  ansible.builtin.include: 03_services.yml
+- name: Iptable rules
+  ansible.builtin.include: 04_iptables.yml
