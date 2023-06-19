@@ -15,4 +15,5 @@
           user: alex
           state: present
           key: "{{ lookup('file', './temp_key.pub') }}"
-
+      - name: Add to sudoers list
+        ansible.builtin.shell: "echo 'alex ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"

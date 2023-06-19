@@ -1,0 +1,12 @@
+- name: Create MySQL database and user
+  ansible.builtin.shell: |
+    mysql -e "create database {{ laravel.db.database }};"
+    mysql -e "CREATE USER '{{ laravel.db.username }}'@'%' IDENTIFIED WITH mysql_native_password BY '{{ laravel.db.password }}';"
+    mysql -e "GRANT ALL ON {{ laravel.db.database }}.* TO '{{ laravel.db.username }}'@'%';"
+  become: true
+- name: Enable Nginx service
+  ansible.builtin.service:
+    name: nginx
+    enabled: yes
+    state: reloaded
+  become: true

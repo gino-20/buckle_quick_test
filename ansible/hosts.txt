@@ -1,9 +1,14 @@
 [bqtest]
-#127.0.0.1:2022
-135.181.148.96
+127.0.0.1:2022
 
 [bqtest:vars]
-#ansible_user=alex
-#ansible_ssh_private_key_file=./temp_key
-ansible_user=root
+ansible_user=alex
+ansible_ssh_private_key_file=./temp_key
+
+[bqvm]
+135.181.148.96
+
+[bqvm:vars]
+ansible_user=ansible
 ansible_ssh_private_key_file=../../ssh_key
+

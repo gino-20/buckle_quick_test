@@ -1,26 +1,26 @@
 ---
 # handlers file for bq-test
-user_name: ubuntu
-
-service_network: bq
-
-php:
-  name: bq-php
-  image: gino20d/bq-php
-  network: bq
-  volume: bq
 
 nginx:
-  name: bq-nginx
-  image: gino20d/bq-nginx
-  network: bq
-  volume: bq
-  ports: "80:80"
+  workers: auto
+  servername: bucklequick.ru
+laravel:
+  host: 127.0.0.1
+  port: 8000
+  app_name: test-app
+  app_env: development
+  app_key: APPLICATION_UNIQUE_KEY_DONT_COPY
+  app_debug: true
+  app_url: http://bucklequick.ru
+  log_channel: stack
+  db:
+    connection: mysql
+    host: 127.0.0.1
+    port: 3306
+    database: testapp
+    username: testapp
+    password: testapp
 
-mysql:
-  name: bq-sql
-  image: mysql:8.0.31
-  root_pass: mysecretpass
-  database_name: bq_test
-  network: bq
+
+user_name: ubuntu
 

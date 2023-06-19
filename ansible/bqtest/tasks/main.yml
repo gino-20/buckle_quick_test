@@ -4,6 +4,8 @@
 - name: Add user
   ansible.builtin.include: 02_user.yml
 - name: Deploy services
-  ansible.builtin.include: 03_services.yml
+  ansible.builtin.include: 03_create_app.yml
+- name: Start services
+  ansible.builtin.include: 04_run-services.yml
 - name: Iptable rules
-  ansible.builtin.include: 04_iptables.yml
+  ansible.builtin.include: 05_iptables.yml

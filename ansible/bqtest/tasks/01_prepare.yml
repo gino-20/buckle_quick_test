@@ -1,55 +1,51 @@
 ---
-- name: Prepare the docker installation
-  block:
-    - name: Download repo key
-      ansible.builtin.shell: |
-        install -m 0755 -d /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-        chmod a+r /etc/apt/keyrings/docker.gpg
-      args:
-        creates: /etc/apt/keyrings/docker.gpg
-
-    - name: Add docker repo to the apt sources
-      ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-        state: present
-
 - name: Update the apt cache
   ansible.builtin.apt:
     update_cache: yes
-
-- name: Clean possible previous docker version
-  ansible.builtin.apt:
-    name: 
-      - docker
-      - docker-client
-      - docker-client-latest
-      - docker-common
-      - docker-latest
-      - docker-latest-logrotate
-      - docker-logrotate
-      - docker-engine
-    state: absent
-- name: Install docker
+  become: true
+- name: Install Nginx
   ansible.builtin.apt:
     name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-buildx-plugin
-      - docker-compose-plugin
+      - nginx
+      - php-mbstring
+      - php-xml
+      - php-bcmath
+      - mysql-server
+      - p7zip
+      - unzip
+      - php-fpm 
+      - php-mysql
     state: present
-- name: Add docker user account
-  ansible.builtin.user:
-    name: docker
-    password: "!"
-    group: docker
-- name: Enable Docker service
-  ansible.builtin.service:
-    name: docker
-    enabled: yes
-    state: started
-- name: Set folder owner
-  ansible.builtin.shell:
-    cmd: chown -R docker:docker /opt
-
+  become: true
+- name: Install Nginx configs
+  block:
+    - name: Install nginx.conf
+      ansible.builtin.template:
+        src: templates/nginx.conf
+        dest: /etc/nginx/nginx.conf
+        force: true
+    - name: Install site config
+      ansible.builtin.template:
+        src: templates/nginx_laravel.conf
+        dest: /etc/nginx/conf.d/{{ laravel.app_name }}.conf
+        force: true
+  become: true
+- name: Install composer
+  block:
+    - name: Download composer setup
+      ansible.builtin.get_url:
+        url: https://getcomposer.org/installer
+        dest: /tmp/composer-setup.php
+        checksum: sha384:55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae
+    - name: Run the installer
+      ansible.builtin.shell: php composer-setup.php
+      args:
+        chdir: /tmp
+        creates: /tmp/composer.phar
+    - name: Copy composer executable
+      ansible.builtin.copy:
+        remote_src: true
+        src: /tmp/composer.phar
+        dest: /usr/local/bin/composer
+        mode: preserve
+  become: true

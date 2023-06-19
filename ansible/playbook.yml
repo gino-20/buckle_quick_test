@@ -1,4 +1,4 @@
 - name: BQ-test init playbook
-  hosts: bqtest
+  hosts: bqvm
   roles:
     - bqtest

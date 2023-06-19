@@ -1,0 +1,31 @@
+---
+- name: Create Laravel project
+  block:
+    - name: Create Laravel folders
+      ansible.builtin.shell: |
+        mkdir -p /var/www/laravel
+        chown -R www-data:www-data /var/www/laravel
+      args:
+        creates: /var/www/laravel
+      become: true
+    - name: Create Laravel app
+      ansible.builtin.shell: |
+        composer create-project laravel/laravel {{ laravel.app_name }}
+      args:
+        chdir: /tmp
+        creates: /tmp/{{ laravel.app_name }}
+    - name: Copy app to the app folder
+      ansible.builtin.copy:
+        remote_src: true
+        src: /tmp/{{ laravel.app_name }}
+        dest: /var/www/laravel/
+        owner: www-data
+        group: www-data
+      become: true
+    - name: Copy Laravel .env file from template
+      ansible.builtin.template:
+        src: templates/laravel.env
+        dest: /var/www/laravel/{{ laravel.app_name }}/.env
+        owner: www-data
+        group: www-data
+      become: true
